@@ -13,6 +13,7 @@ export function Projects() {
         "A premium website for Royal Gate a revolutionary food distibution company",
       image: "/images/RG.png",
       technologies: ["Next JS", "Tailwind", "Vite"],
+      liveUrl: "https://royalgategroup.com.ng/",
 
     },
     {
