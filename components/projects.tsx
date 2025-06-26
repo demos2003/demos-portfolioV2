@@ -22,7 +22,7 @@ export function Projects() {
       technologies: ["Next.js", "TypeScript", "Tailwind"],
       liveUrl: "https://lsmtl.lg.gov.ng/",
 
-      
+
     },
     {
       title: "Ticket Dash",
@@ -31,7 +31,7 @@ export function Projects() {
       image: "/images/TD.png",
       technologies: ["React", "Spring boot", "React Native", "Postgres"],
       liveUrl: "https://ticket-pro-web.onrender.com/",
-   
+
     },
   ]
 
@@ -76,15 +76,21 @@ export function Projects() {
                       </Badge>
                     ))}
                   </div>
-                  <div className="flex gap-2 pt-2">
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full"
+                  >
                     <Button
                       size="sm"
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 group/btn"
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 group/btn"
                     >
                       <ExternalLink className="w-4 h-4 mr-2 group-hover/btn:rotate-12 transition-transform" />
                       Live Demo
                     </Button>
-                  </div>
+                  </a>
+
                 </CardContent>
               </Card>
             </ScrollAnimation>
