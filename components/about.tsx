@@ -31,19 +31,19 @@ export function About() {
           <div className="grid grid-cols-2 gap-6">
             <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">50+</div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">30+</div>
                 <div className="text-gray-300">Projects Completed</div>
               </CardContent>
             </Card>
             <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">3+</div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">4+</div>
                 <div className="text-gray-300">Years Experience</div>
               </CardContent>
             </Card>
             <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">20+</div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">10+</div>
                 <div className="text-gray-300">Technologies</div>
               </CardContent>
             </Card>
