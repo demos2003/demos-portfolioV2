@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -15,6 +16,23 @@ export function Navigation() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const targetId = e.currentTarget.getAttribute("href")?.substring(1)
+    if (targetId) {
+      const targetElement = document.getElementById(targetId)
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        })
+      }
+    }
+    if (isOpen) {
+      setIsOpen(false)
+    }
+  }
 
   const navItems = [
     { name: "Home", href: "#home" },
@@ -53,6 +71,7 @@ export function Navigation() {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={handleLinkClick}
                 className="relative px-4 py-2 text-gray-300 hover:text-white transition-all duration-300 group"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
@@ -65,7 +84,7 @@ export function Navigation() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <a href="#contact">
+            <a href="#contact" onClick={handleLinkClick}>
               <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-purple-500/25">
                 Let's Talk
               </Button>
@@ -110,8 +129,8 @@ export function Navigation() {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={handleLinkClick}
                 className="block text-gray-300 hover:text-white py-2 transition-all duration-300 transform hover:translate-x-2"
-                onClick={() => setIsOpen(false)}
                 style={{
                   animation: isOpen ? `slideInLeft 0.3s ease-out ${index * 100}ms both` : "none",
                 }}
@@ -119,9 +138,11 @@ export function Navigation() {
                 {item.name}
               </a>
             ))}
-            <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-              Let's Talk
-            </Button>
+            <a href="#contact" onClick={handleLinkClick}>
+              <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                Let's Talk
+              </Button>
+            </a>
           </div>
         </div>
       </div>
