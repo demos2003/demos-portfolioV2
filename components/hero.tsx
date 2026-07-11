@@ -1,104 +1,102 @@
 import { Button } from "@/components/ui/button"
-import { Github, Linkedin, Twitter, Mail, Download, ArrowRight } from "lucide-react"
+import { Github, Linkedin, Twitter, Download, ArrowRight } from "lucide-react"
 import Image from "next/image"
+import { Reveal } from "@/components/motion/reveal"
+import { MagneticButton } from "@/components/motion/magnetic-button"
+import { SectionGlow } from "@/components/motion/active-section"
+
+const SOCIALS = [
+  { icon: Github, href: "https://github.com/demos2003", label: "GitHub" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/iyidemilade-nasiru-halim-9b9a15269/", label: "LinkedIn" },
+  { icon: Twitter, href: "https://x.com/NasiruDev", label: "Twitter" },
+]
 
 export function Hero() {
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8 animate-fade-in-up">
-            <div className="space-y-6">
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-full animate-pulse-slow">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-3 animate-ping"></div>
-                <span className="text-purple-400 text-sm font-medium">Available for new projects</span>
+    <section id="home" className="relative min-h-screen flex items-center pt-24">
+      <SectionGlow id="home" />
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-7 space-y-10">
+            <Reveal>
+              <div className="flex items-center gap-2 text-sm text-paper/50">
+                <span className="w-1.5 h-1.5 rounded-full bg-clay" />
+                Available for new projects
               </div>
+            </Reveal>
 
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight animate-slide-in-left">
-                  Software
-                  <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent animate-gradient">
-                    Engineer
-                  </span>
-                </h1>
-                <h2 className="text-xl md:text-2xl text-gray-300 animate-slide-in-left animation-delay-200">
-                  Building digital experiences that matter
-                </h2>
-              </div>
-            </div>
+            <Reveal delay={100}>
+              <h1 className="font-serif text-6xl sm:text-7xl lg:text-8xl leading-[0.95] tracking-tight text-paper">
+                Software
+                <br />
+                <span className="text-clay">Engineer</span>
+              </h1>
+            </Reveal>
 
-            <p className="text-gray-400 text-lg max-w-lg leading-relaxed animate-fade-in animation-delay-400">
-              I am Nasiru Iyidemilade, i craft full-stack applications with modern technologies, focusing on performance, user experience, and
-              scalable architecture. Let's build something amazing together.
-            </p>
+            <Reveal delay={200}>
+              <p className="text-paper/60 text-lg max-w-lg leading-relaxed">
+                I&apos;m Nasiru Iyidemilade. I craft full-stack applications with modern
+                technologies, focusing on performance, user experience, and scalable
+                architecture.
+              </p>
+            </Reveal>
 
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-600">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-purple-500/25 group"
-              >
-                View My Work
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <a href="/Nasiru_Iyidemilade_Resume.pdf" download>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-purple-500 text-purple-400 hover:bg-purple-500/10 transform hover:scale-105 transition-all duration-300 group"
-                >
-                  <Download className="mr-2 h-4 w-4 group-hover:animate-bounce" />
-                  Download CV
-                </Button>
-              </a>
-
-            </div>
-
-            <div className="flex space-x-4 animate-fade-in animation-delay-800">
-              {[
-                { icon: Github, href: "https://github.com/demos2003", label: "GitHub" },
-                { icon: Linkedin, href: "https://www.linkedin.com/in/iyidemilade-nasiru-halim-9b9a15269/", label: "LinkedIn" },
-                { icon: Twitter, href: "https://x.com/NasiruDev", label: "Twitter" },
-              ].map((social, index) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ animationDelay: `${800 + index * 100}ms` }}
-                >
+            <Reveal delay={300}>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <MagneticButton>
+                  <a href="#projects">
+                    <Button
+                      size="lg"
+                      className="bg-paper text-ink hover:bg-paper/90 rounded-none px-8 group"
+                    >
+                      View My Work
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </a>
+                </MagneticButton>
+                <a href="/Nasiru_Iyidemilade_Resume.pdf" download>
                   <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-purple-400 hover:text-white hover:bg-purple-500/20 transform hover:scale-110 hover:-translate-y-1 transition-all duration-300"
+                    size="lg"
+                    variant="outline"
+                    className="border-paper/20 text-paper bg-transparent hover:bg-paper/10 rounded-none px-8"
                   >
-                    <social.icon className="h-5 w-5" />
+                    <Download className="mr-2 h-4 w-4" />
+                    Download CV
                   </Button>
                 </a>
-              ))}
-            </div>
-
-          </div>
-
-          <div className="flex justify-center lg:justify-end animate-fade-in-right">
-            <div className="relative group">
-              <div className="relative">
-                <div className="w-80 h-96 border-2 border-purple-500/50 rounded-2xl overflow-hidden transform group-hover:scale-105 transition-all duration-500 shadow-2xl">
-                  <Image
-                    src="/images/ME2.jpeg"
-                    alt="Profile"
-                    width={320}
-                    height={400}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center animate-spin-slow">
-                  <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">DEV</span>
-                  </div>
-                </div>
               </div>
-            </div>
+            </Reveal>
+
+            <Reveal delay={400}>
+              <div className="flex gap-6">
+                {SOCIALS.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    className="text-paper/40 hover:text-paper transition-colors"
+                  >
+                    <social.icon className="h-5 w-5" />
+                  </a>
+                ))}
+              </div>
+            </Reveal>
           </div>
+
+          <Reveal delay={200} className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="w-72 h-80 sm:w-80 sm:h-96 border border-paper/15 overflow-hidden">
+              <Image
+                src="/images/ME2.jpeg"
+                alt="Profile"
+                width={320}
+                height={400}
+                className="w-full h-full object-cover grayscale"
+                priority
+              />
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>

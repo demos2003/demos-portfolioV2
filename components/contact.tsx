@@ -1,16 +1,23 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
+import { Mail, Phone, MapPin, ArrowRight } from "lucide-react"
 import emailjs from "@emailjs/browser"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import { submitContactMessage } from "@/lib/actions/contact"
+import type { ContactInfo } from "@/lib/data/about"
+import { Reveal } from "@/components/motion/reveal"
+import { MagneticButton } from "@/components/motion/magnetic-button"
+import { SectionGlow } from "@/components/motion/active-section"
 
-export function Contact() {
+const fieldClassName =
+  "bg-transparent border-0 border-b border-paper/20 rounded-none px-0 text-paper placeholder:text-paper/40 focus-visible:ring-0 focus-visible:border-clay transition-colors"
+
+export function Contact({ contactInfo }: { contactInfo: ContactInfo }) {
   const [formData, setFormData] = useState({
     user_name: "",
     user_email: "",
@@ -29,125 +36,125 @@ export function Contact() {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!form.current) return
     setIsLoading(true)
 
-    emailjs
-      .sendForm(
-        "service_a50v2vu",         // Replace with your EmailJS service ID
-        "template_ysj7cqg",        // Replace with your EmailJS template ID
+    const [emailResult, dbResult] = await Promise.allSettled([
+      emailjs.sendForm(
+        "service_a50v2vu", // Replace with your EmailJS service ID
+        "template_ysj7cqg", // Replace with your EmailJS template ID
         form.current,
-        "VzuWI64-DSChqLogf"        // Replace with your EmailJS public key
-      )
-      .then(
-        (result) => {
-          toast.success("Message sent successfully! 🚀")
-          setFormData({
-            user_name: "",
-            user_email: "",
-            message: "",
-          })
-          setIsLoading(false)
-        },
-        (error) => {
-          toast.error("Failed to send message 😢")
-          console.error(error.text)
-          setIsLoading(false)
-        }
-      )
+        "VzuWI64-DSChqLogf" // Replace with your EmailJS public key
+      ),
+      submitContactMessage({
+        name: formData.user_name,
+        email: formData.user_email,
+        message: formData.message,
+      }),
+    ])
+
+    setIsLoading(false)
+
+    if (dbResult.status === "rejected") {
+      console.error(dbResult.reason)
+    }
+
+    if (emailResult.status === "fulfilled" || dbResult.status === "fulfilled") {
+      toast.success("Message sent successfully! 🚀")
+      setFormData({
+        user_name: "",
+        user_email: "",
+        message: "",
+      })
+    } else {
+      toast.error("Failed to send message 😢")
+      console.error(emailResult.reason)
+    }
   }
 
   return (
-    <section id="contact" className="py-20 bg-gray-900/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Get In <span className="text-purple-400">Touch</span>
-          </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-purple-600 to-pink-600 mx-auto" />
-        </div>
+    <section id="contact" className="relative py-28 sm:py-36 border-t border-paper/10">
+      <SectionGlow id="contact" />
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <Reveal>
+          <span className="text-sm text-clay tracking-wide">Contact</span>
+        </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Info */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-4">Let's work together</h3>
-              <p className="text-gray-300 text-lg">
-                I'm always interested in new opportunities and exciting projects. Whether you have a question or just want to say hi, feel free to reach out!
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mt-10">
+          <div className="lg:col-span-5 space-y-8">
+            <Reveal delay={100}>
+              <h3 className="font-serif text-3xl sm:text-4xl text-paper">Let&apos;s work together</h3>
+              <p className="text-paper/60 text-lg mt-4 max-w-md">
+                I&apos;m always interested in new opportunities and exciting projects. Whether
+                you have a question or just want to say hi, feel free to reach out.
               </p>
-            </div>
+            </Reveal>
 
-            <div className="space-y-6">
-              <ContactDetail icon={<Mail />} label="Email" value="ladenas202@gmail.com" />
-              <ContactDetail icon={<Phone />} label="Phone" value="09027795800" />
-              <ContactDetail icon={<MapPin />} label="Location" value="Lagos, Nigeria" />
-            </div>
+            <Reveal delay={200}>
+              <div className="space-y-5">
+                <ContactDetail icon={<Mail className="h-4 w-4" />} value={contactInfo.email} />
+                <ContactDetail icon={<Phone className="h-4 w-4" />} value={contactInfo.phone} />
+                <ContactDetail icon={<MapPin className="h-4 w-4" />} value={contactInfo.location} />
+              </div>
+            </Reveal>
           </div>
 
-          {/* Contact Form */}
-          <Card className="bg-gray-900/50 border-purple-500/20">
-            <CardHeader>
-              <CardTitle className="text-white">Send me a message</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form ref={form} onSubmit={handleSubmit} className="space-y-6">
-                <Input
-                  name="user_name"
-                  placeholder="Your Name"
-                  value={formData.user_name}
-                  onChange={handleChange}
-                  className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-400 focus:border-purple-500"
-                  required
-                />
-                <Input
-                  name="user_email"
-                  type="email"
-                  placeholder="Your Email"
-                  value={formData.user_email}
-                  onChange={handleChange}
-                  className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-400 focus:border-purple-500"
-                  required
-                />
-                <Textarea
-                  name="message"
-                  placeholder="Your Message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={5}
-                  className="bg-gray-800/50 border-purple-500/30 text-white placeholder:text-gray-400 focus:border-purple-500 resize-none"
-                  required
-                />
+          <Reveal delay={150} className="lg:col-span-7">
+            <form ref={form} onSubmit={handleSubmit} className="space-y-8">
+              <Input
+                name="user_name"
+                placeholder="Your Name"
+                value={formData.user_name}
+                onChange={handleChange}
+                className={fieldClassName}
+                required
+              />
+              <Input
+                name="user_email"
+                type="email"
+                placeholder="Your Email"
+                value={formData.user_email}
+                onChange={handleChange}
+                className={fieldClassName}
+                required
+              />
+              <Textarea
+                name="message"
+                placeholder="Your Message"
+                value={formData.message}
+                onChange={handleChange}
+                rows={4}
+                className={`${fieldClassName} resize-none`}
+                required
+              />
 
+              <MagneticButton>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  size="lg"
+                  className="bg-paper text-ink hover:bg-paper/90 rounded-none px-8 group"
                 >
-                  <Send className="w-4 h-4 mr-2" />
                   {isLoading ? "Sending..." : "Send Message"}
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </form>
-            </CardContent>
-          </Card>
+              </MagneticButton>
+            </form>
+          </Reveal>
         </div>
       </div>
     </section>
   )
 }
 
-function ContactDetail({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function ContactDetail({ icon, value }: { icon: React.ReactNode; value: string }) {
   return (
-    <div className="flex items-center space-x-4">
-      <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-        {icon}
-      </div>
-      <div>
-        <h4 className="text-white font-semibold">{label}</h4>
-        <p className="text-gray-300">{value}</p>
-      </div>
+    <div className="flex items-center gap-3 text-paper/70">
+      <span className="text-paper/40">{icon}</span>
+      <span>{value}</span>
     </div>
   )
 }
