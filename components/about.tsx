@@ -1,58 +1,44 @@
-import { Card, CardContent } from "@/components/ui/card"
+import type { AboutStat } from "@/lib/data/about"
+import { Reveal } from "@/components/motion/reveal"
+import { TextReveal } from "@/components/motion/text-reveal"
+import { SectionGlow } from "@/components/motion/active-section"
 
-export function About() {
+export function About({ stats, bio }: { stats: AboutStat[]; bio: string[] }) {
+  const [firstParagraph, ...restParagraphs] = bio
+
   return (
-    <section id="about" className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            About <span className="text-purple-400">Me</span>
-          </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-purple-600 to-pink-600 mx-auto"></div>
-        </div>
+    <section id="about" className="relative py-28 sm:py-36">
+      <SectionGlow id="about" />
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="lg:col-span-7 space-y-8">
+            <Reveal>
+              <span className="text-sm text-clay tracking-wide">About</span>
+            </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <p className="text-gray-300 text-lg leading-relaxed">
-              I'm a passionate Full Stack Developer with expertise in modern web technologies. I love creating
-              efficient, scalable, and user-friendly applications that solve real-world problems.
-            </p>
-            <p className="text-gray-300 text-lg leading-relaxed">
-              My journey in software development started with curiosity about how things work behind the scenes. Today,
-              I specialize in React, Node.js, Python, and cloud technologies, always staying updated with the latest
-              industry trends.
-            </p>
-            <p className="text-gray-300 text-lg leading-relaxed">
-              When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or
-              sharing knowledge with the developer community.
-            </p>
+            {firstParagraph && (
+              <TextReveal
+                text={firstParagraph}
+                className="font-serif text-3xl sm:text-4xl leading-snug text-paper"
+              />
+            )}
+
+            {restParagraphs.map((paragraph, index) => (
+              <Reveal key={index} delay={index * 100}>
+                <p className="text-paper/60 text-lg leading-relaxed max-w-xl">{paragraph}</p>
+              </Reveal>
+            ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">30+</div>
-                <div className="text-gray-300">Projects Completed</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">4+</div>
-                <div className="text-gray-300">Years Experience</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">10+</div>
-                <div className="text-gray-300">Technologies</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/50 border-purple-500/20 hover:border-purple-500/40 transition-colors">
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">100%</div>
-                <div className="text-gray-300">Client Satisfaction</div>
-              </CardContent>
-            </Card>
+          <div className="lg:col-span-5 flex flex-col justify-center divide-y divide-paper/10 border-y border-paper/10 lg:border-y-0">
+            {stats.map((stat, index) => (
+              <Reveal key={stat.id} delay={index * 80}>
+                <div className="flex items-baseline justify-between py-6">
+                  <span className="font-serif text-4xl text-paper">{stat.value}</span>
+                  <span className="text-paper/50 text-sm text-right">{stat.label}</span>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </div>
