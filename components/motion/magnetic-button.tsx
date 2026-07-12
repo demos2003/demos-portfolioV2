@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react"
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion"
 import { SPRING_SNAPPY } from "@/lib/motion"
 
-// How close the pointer (mouse or touch) needs to be before the button starts
-// reacting -- lets it feel "attracted" before the cursor is directly over it.
+// How close the cursor needs to be before the button starts reacting -- lets
+// it feel "attracted" before the cursor is directly over it. Mouse-only: on
+// touch devices, touchmove fires during scrolling and made the button jump
+// around while scrolling past it, which felt broken rather than alive.
 const ACTIVATION_RADIUS = 260
 // The "boundary": max displacement regardless of how close the pointer gets.
 const MAX_PULL = 34
@@ -49,23 +51,9 @@ export function MagneticButton({
       updatePull(e.clientX, e.clientY)
     }
 
-    function onTouchMove(e: TouchEvent) {
-      const touch = e.touches[0]
-      if (touch) updatePull(touch.clientX, touch.clientY)
-    }
-
-    function onTouchEnd() {
-      x.set(0)
-      y.set(0)
-    }
-
     window.addEventListener("mousemove", onMouseMove, { passive: true })
-    window.addEventListener("touchmove", onTouchMove, { passive: true })
-    window.addEventListener("touchend", onTouchEnd, { passive: true })
     return () => {
       window.removeEventListener("mousemove", onMouseMove)
-      window.removeEventListener("touchmove", onTouchMove)
-      window.removeEventListener("touchend", onTouchEnd)
     }
   }, [reduceMotion, strength, x, y])
 
