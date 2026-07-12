@@ -17,9 +17,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Daymos Studio',
+  title: 'Demos',
   description: 'Portfolio of Nasiru Iyidemilade',
-  generator: 'Daymos Studio',
+  generator: 'Demos',
 }
 
 export default function RootLayout({

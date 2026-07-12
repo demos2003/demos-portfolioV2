@@ -1,4 +1,5 @@
 import { Github, Linkedin, Twitter } from "lucide-react"
+import { Logo } from "@/components/logo"
 
 const SOCIALS = [
   { icon: Github, href: "https://github.com/demos2003", label: "GitHub" },
@@ -10,7 +11,7 @@ export function Footer() {
   return (
     <footer className="border-t border-paper/10">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-        <span className="font-serif text-lg text-paper">Daymos Studio</span>
+        <Logo className="h-8 w-8" />
 
         <div className="flex items-center gap-6">
           {SOCIALS.map((social) => (
