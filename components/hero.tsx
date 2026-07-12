@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Github, Linkedin, Twitter, Download, ArrowRight } from "lucide-react"
-import Image from "next/image"
 import { Reveal } from "@/components/motion/reveal"
 import { MagneticButton } from "@/components/motion/magnetic-button"
 import { SectionGlow } from "@/components/motion/active-section"
+import { TerminalCard } from "@/components/motion/terminal-card"
 
 const SOCIALS = [
   { icon: Github, href: "https://github.com/demos2003", label: "GitHub" },
@@ -13,7 +13,7 @@ const SOCIALS = [
 
 export function Hero() {
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-24">
+    <section id="home" className="relative min-h-screen flex items-center pt-24 overflow-hidden">
       <SectionGlow id="home" />
       <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
@@ -86,16 +86,7 @@ export function Hero() {
           </div>
 
           <Reveal delay={200} className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div className="w-72 h-80 sm:w-80 sm:h-96 border border-paper/15 overflow-hidden">
-              <Image
-                src="/images/ME2.jpeg"
-                alt="Profile"
-                width={320}
-                height={400}
-                className="w-full h-full object-cover grayscale"
-                priority
-              />
-            </div>
+            <TerminalCard />
           </Reveal>
         </div>
       </div>
