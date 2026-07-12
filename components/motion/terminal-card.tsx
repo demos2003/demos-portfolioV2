@@ -68,10 +68,10 @@ export function TerminalCard() {
 
       <div className="relative w-full aspect-[4/3]">
         <Image
-          src="/images/ME2.jpeg"
+          src="/images/ME3.jpeg"
           alt="Profile"
           fill
-          className="object-cover grayscale"
+          className="object-cover object-[center_80%] grayscale"
           priority
         />
       </div>
