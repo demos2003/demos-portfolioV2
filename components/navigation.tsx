@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import { Logo } from "@/components/logo"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -48,12 +49,8 @@ export function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
         <div className="flex items-center justify-between h-20">
-          <a
-            href="#home"
-            onClick={handleLinkClick}
-            className="font-serif text-xl text-paper tracking-tight"
-          >
-            Daymos Studio
+          <a href="#home" onClick={handleLinkClick} aria-label="Demos">
+            <Logo />
           </a>
 
           <div className="hidden md:flex items-center gap-8">
