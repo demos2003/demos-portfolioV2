@@ -16,10 +16,28 @@ const inter = Inter({
   variable: '--font-sans',
 })
 
+const siteUrl = 'https://demosportfolio.netlify.app'
+const shareDescription =
+  'Full-stack software engineer building thoughtful, fast, well-crafted products.'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'Demos',
   description: 'Portfolio of Nasiru Iyidemilade',
   generator: 'Demos',
+  openGraph: {
+    title: 'Demos — Nasiru Iyidemilade',
+    description: shareDescription,
+    url: siteUrl,
+    siteName: 'Demos',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Demos — Nasiru Iyidemilade',
+    description: shareDescription,
+  },
 }
 
 export default function RootLayout({
