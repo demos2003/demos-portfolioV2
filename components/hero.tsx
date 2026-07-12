@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Github, Linkedin, Twitter, Download, ArrowRight } from "lucide-react"
 import { Reveal } from "@/components/motion/reveal"
 import { MagneticButton } from "@/components/motion/magnetic-button"
+import { PulseGlow } from "@/components/motion/pulse-glow"
 import { SectionGlow } from "@/components/motion/active-section"
 import { TerminalCard } from "@/components/motion/terminal-card"
 
@@ -43,17 +44,19 @@ export function Hero() {
 
             <Reveal delay={300}>
               <div className="flex flex-col sm:flex-row gap-4">
-                <MagneticButton>
-                  <a href="#projects">
-                    <Button
-                      size="lg"
-                      className="bg-paper text-ink hover:bg-paper/90 rounded-none px-8 group"
-                    >
-                      View My Work
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </a>
-                </MagneticButton>
+                <PulseGlow>
+                  <MagneticButton>
+                    <a href="#projects">
+                      <Button
+                        size="lg"
+                        className="bg-paper text-ink hover:bg-paper/90 rounded-none px-8 group"
+                      >
+                        View My Work
+                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </a>
+                  </MagneticButton>
+                </PulseGlow>
                 <a href="/Nasiru_Iyidemilade_Resume.pdf" download>
                   <Button
                     size="lg"

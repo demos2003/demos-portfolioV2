@@ -1,12 +1,18 @@
 "use client"
 
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion"
 import { SPRING_SNAPPY } from "@/lib/motion"
 
+// How close the pointer (mouse or touch) needs to be before the button starts
+// reacting -- lets it feel "attracted" before the cursor is directly over it.
+const ACTIVATION_RADIUS = 260
+// The "boundary": max displacement regardless of how close the pointer gets.
+const MAX_PULL = 34
+
 export function MagneticButton({
   children,
-  strength = 0.3,
+  strength = 0.6,
 }: {
   children: React.ReactNode
   strength?: number
@@ -18,30 +24,57 @@ export function MagneticButton({
   const springX = useSpring(x, SPRING_SNAPPY)
   const springY = useSpring(y, SPRING_SNAPPY)
 
+  useEffect(() => {
+    if (reduceMotion) return
+
+    function updatePull(clientX: number, clientY: number) {
+      const el = ref.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const dx = clientX - (rect.left + rect.width / 2)
+      const dy = clientY - (rect.top + rect.height / 2)
+      const distance = Math.sqrt(dx * dx + dy * dy)
+
+      if (distance < ACTIVATION_RADIUS) {
+        const proximity = 1 - distance / ACTIVATION_RADIUS
+        x.set(Math.max(-MAX_PULL, Math.min(MAX_PULL, dx * strength * proximity)))
+        y.set(Math.max(-MAX_PULL, Math.min(MAX_PULL, dy * strength * proximity)))
+      } else {
+        x.set(0)
+        y.set(0)
+      }
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      updatePull(e.clientX, e.clientY)
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      const touch = e.touches[0]
+      if (touch) updatePull(touch.clientX, touch.clientY)
+    }
+
+    function onTouchEnd() {
+      x.set(0)
+      y.set(0)
+    }
+
+    window.addEventListener("mousemove", onMouseMove, { passive: true })
+    window.addEventListener("touchmove", onTouchMove, { passive: true })
+    window.addEventListener("touchend", onTouchEnd, { passive: true })
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("touchmove", onTouchMove)
+      window.removeEventListener("touchend", onTouchEnd)
+    }
+  }, [reduceMotion, strength, x, y])
+
   if (reduceMotion) {
     return <>{children}</>
   }
 
-  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    const rect = ref.current?.getBoundingClientRect()
-    if (!rect) return
-    x.set((e.clientX - (rect.left + rect.width / 2)) * strength)
-    y.set((e.clientY - (rect.top + rect.height / 2)) * strength)
-  }
-
-  function handleMouseLeave() {
-    x.set(0)
-    y.set(0)
-  }
-
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
-      className="inline-block"
-    >
+    <motion.div ref={ref} style={{ x: springX, y: springY }} className="inline-block">
       {children}
     </motion.div>
   )
