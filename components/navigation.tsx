@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { Logo } from "@/components/logo"
@@ -8,6 +10,8 @@ import { Logo } from "@/components/logo"
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+  const isHome = pathname === "/"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,28 +21,28 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    const targetId = e.currentTarget.getAttribute("href")?.substring(1)
-    if (targetId) {
-      const targetElement = document.getElementById(targetId)
-      if (targetElement) {
-        targetElement.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        })
-      }
-    }
-    if (isOpen) {
-      setIsOpen(false)
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (isOpen) setIsOpen(false)
+
+    const hashIndex = href.indexOf("#")
+    if (!isHome || hashIndex === -1) return
+
+    const targetId = href.slice(hashIndex + 1)
+    const targetElement = document.getElementById(targetId)
+    if (targetElement) {
+      e.preventDefault()
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
     }
   }
 
   const navItems = [
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Work", href: "#projects" },
-    { name: "Blog", href: "#blog" },
+    { name: "About", href: "/#about" },
+    { name: "Services", href: "/#services" },
+    { name: "Work", href: "/projects" },
+    { name: "Blog", href: "/#blog" },
   ]
 
   return (
@@ -49,33 +53,33 @@ export function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
         <div className="flex items-center justify-between h-20">
-          <a href="#home" onClick={handleLinkClick} aria-label="Demos">
+          <Link href="/#home" onClick={(e) => handleLinkClick(e, "/#home")} aria-label="Demos">
             <Logo />
-          </a>
+          </Link>
 
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
                 href={item.href}
-                onClick={handleLinkClick}
+                onClick={(e) => handleLinkClick(e, item.href)}
                 className="text-sm text-paper/60 hover:text-paper transition-colors relative group"
               >
                 {item.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-px bg-clay transition-all duration-300 group-hover:w-full" />
-              </a>
+              </Link>
             ))}
           </div>
 
           <div className="hidden md:block">
-            <a href="#contact" onClick={handleLinkClick}>
+            <Link href="/#contact" onClick={(e) => handleLinkClick(e, "/#contact")}>
               <Button
                 variant="outline"
                 className="border-paper/20 text-paper bg-transparent hover:bg-paper hover:text-ink transition-colors rounded-none"
               >
                 Let&apos;s Talk
               </Button>
-            </a>
+            </Link>
           </div>
 
           <div className="md:hidden">
@@ -103,20 +107,20 @@ export function Navigation() {
         <div className="bg-ink border-t border-paper/10">
           <div className="px-6 py-6 space-y-4">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
                 href={item.href}
-                onClick={handleLinkClick}
+                onClick={(e) => handleLinkClick(e, item.href)}
                 className="block text-paper/70 hover:text-paper py-1 transition-colors"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
-            <a href="#contact" onClick={handleLinkClick}>
+            <Link href="/#contact" onClick={(e) => handleLinkClick(e, "/#contact")}>
               <Button className="w-full mt-2 bg-paper text-ink hover:bg-paper/90 rounded-none">
                 Let&apos;s Talk
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

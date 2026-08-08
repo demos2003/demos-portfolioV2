@@ -12,6 +12,13 @@ create table if not exists projects (
   technologies text[] not null default '{}',
   live_url text,
   display_order int not null default 0,
+  slug text,
+  timeline text,
+  problem_statement text,
+  process text,
+  solution text,
+  results text,
+  gallery_images text[] not null default '{}',
   created_at timestamptz not null default now()
 );
 
@@ -66,3 +73,18 @@ create table if not exists contact_submissions (
 
 create index if not exists skills_category_id_idx on skills(category_id);
 create index if not exists contact_submissions_created_at_idx on contact_submissions(created_at desc);
+
+-- Migration: case study fields on projects (safe to re-run; run this in the
+-- Supabase SQL editor against an existing database that predates these columns).
+alter table projects add column if not exists slug text;
+alter table projects add column if not exists timeline text;
+alter table projects add column if not exists problem_statement text;
+alter table projects add column if not exists process text;
+alter table projects add column if not exists solution text;
+alter table projects add column if not exists results text;
+alter table projects add column if not exists gallery_images text[] not null default '{}';
+
+update projects set slug = lower(regexp_replace(regexp_replace(title, '[^a-zA-Z0-9]+', '-', 'g'), '^-+|-+$', '', 'g'))
+where slug is null;
+
+create unique index if not exists projects_slug_idx on projects(slug);

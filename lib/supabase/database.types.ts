@@ -12,6 +12,13 @@ export type Database = {
           technologies: string[]
           live_url: string | null
           display_order: number
+          slug: string
+          timeline: string | null
+          problem_statement: string | null
+          process: string | null
+          solution: string | null
+          results: string | null
+          gallery_images: string[]
           created_at: string
         }
         Insert: {
@@ -22,6 +29,13 @@ export type Database = {
           technologies?: string[]
           live_url?: string | null
           display_order?: number
+          slug: string
+          timeline?: string | null
+          problem_statement?: string | null
+          process?: string | null
+          solution?: string | null
+          results?: string | null
+          gallery_images?: string[]
           created_at?: string
         }
         Update: Partial<Database["public"]["Tables"]["projects"]["Insert"]>

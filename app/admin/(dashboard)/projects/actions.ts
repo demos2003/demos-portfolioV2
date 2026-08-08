@@ -15,8 +15,32 @@ function parseProjectForm(formData: FormData): ProjectInput {
     .filter(Boolean)
   const liveUrl = String(formData.get("liveUrl") ?? "").trim() || null
   const displayOrder = Number(formData.get("displayOrder") ?? 0) || 0
+  const slug = String(formData.get("slug") ?? "").trim()
+  const timeline = String(formData.get("timeline") ?? "").trim() || null
+  const problemStatement = String(formData.get("problemStatement") ?? "").trim() || null
+  const process = String(formData.get("process") ?? "").trim() || null
+  const solution = String(formData.get("solution") ?? "").trim() || null
+  const results = String(formData.get("results") ?? "").trim() || null
+  const galleryImages = String(formData.get("galleryImages") ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean)
 
-  return { title, description, imageUrl, technologies, liveUrl, displayOrder }
+  return {
+    title,
+    description,
+    imageUrl,
+    technologies,
+    liveUrl,
+    displayOrder,
+    slug,
+    timeline,
+    problemStatement,
+    process,
+    solution,
+    results,
+    galleryImages,
+  }
 }
 
 function revalidateProjectPaths() {
