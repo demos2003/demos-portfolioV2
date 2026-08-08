@@ -12,7 +12,7 @@ export function Projects({ projects }: { projects: Project[] }) {
           <span className="text-sm text-clay tracking-wide">Projects</span>
         </Reveal>
 
-        <ProjectsList projects={projects} />
+        <ProjectsList projects={projects} limit={3} />
       </div>
     </section>
   )

@@ -90,6 +90,75 @@ export function ProjectFormDialog({
             <Input id="displayOrder" name="displayOrder" type="number" defaultValue={project?.displayOrder ?? 0} />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="slug">Slug</Label>
+            <Input
+              id="slug"
+              name="slug"
+              placeholder="auto-generated from title if left blank"
+              defaultValue={project?.slug ?? ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="timeline">Timeline</Label>
+            <Input id="timeline" name="timeline" placeholder="e.g. 6 weeks, Jan–Mar 2025" defaultValue={project?.timeline ?? ""} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="problemStatement">Problem</Label>
+            <Textarea
+              id="problemStatement"
+              name="problemStatement"
+              rows={4}
+              placeholder="What problem was this project solving?"
+              defaultValue={project?.problemStatement ?? ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="process">Process</Label>
+            <Textarea
+              id="process"
+              name="process"
+              rows={4}
+              placeholder="How did you approach it?"
+              defaultValue={project?.process ?? ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="solution">Solution</Label>
+            <Textarea
+              id="solution"
+              name="solution"
+              rows={4}
+              placeholder="What did you build?"
+              defaultValue={project?.solution ?? ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="results">Results</Label>
+            <Textarea
+              id="results"
+              name="results"
+              rows={4}
+              placeholder="What was the outcome/impact?"
+              defaultValue={project?.results ?? ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="galleryImages">Gallery Image URLs (comma-separated)</Label>
+            <Input
+              id="galleryImages"
+              name="galleryImages"
+              placeholder="/images/one.png, /images/two.png"
+              defaultValue={project?.galleryImages.join(", ") ?? ""}
+            />
+          </div>
+
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <DialogFooter>
