@@ -45,6 +45,7 @@ function parseProjectForm(formData: FormData): ProjectInput {
 
 function revalidateProjectPaths() {
   revalidatePath("/")
+  revalidatePath("/projects", "layout")
   revalidatePath("/admin/projects")
   revalidatePath("/admin")
 }
