@@ -47,6 +47,6 @@ insert into site_settings (key, value) values
   ('contact_info', '{
     "email": "ladenas202@gmail.com",
     "phone": "09027795800",
-    "location": "Lagos, Nigeria"
+    "location": "Birmingham, UK"
   }'::jsonb)
 on conflict (key) do nothing;
