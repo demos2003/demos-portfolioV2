@@ -1,25 +1,79 @@
 name: Supabase keep-alive
 
+# Free Supabase projects pause after about a week without activity. This pings
+# the REST API daily, and if the ping fails it opens a GitHub issue (once) so
+# the failure is noticed. The issue closes itself when pings succeed again.
+
 on:
   schedule:
-    - cron: "0 6 */5 * *"
+    - cron: "0 6 * * *"
   workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  ISSUE_TITLE: "Supabase keep-alive is failing"
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase REST API
-        run: |
-          status=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${SUPABASE_URL}/rest/v1/projects?select=id&limit=1" \
-            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
-          echo "Supabase responded with status $status"
-          if [ "$status" -ge 400 ]; then
-            echo "Keep-alive ping failed"
-            exit 1
-          fi
+        id: ping
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set +e
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            reason="The SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY repository secret is missing."
+          else
+            status=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 \
+              "${SUPABASE_URL%/}/rest/v1/projects?select=id&limit=1" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" 2>/tmp/curl.err)
+            code=$?
+            if [ $code -eq 6 ]; then
+              reason="The Supabase host does not resolve (curl exit 6). The project is paused or deleted: restore it at https://supabase.com/dashboard."
+            elif [ $code -ne 0 ]; then
+              reason="Could not reach Supabase (curl exit $code): $(cat /tmp/curl.err)"
+            elif [ "$status" = "401" ] || [ "$status" = "403" ]; then
+              reason="Supabase rejected the key (HTTP $status). Update the SUPABASE_SERVICE_ROLE_KEY secret."
+            elif [ "$status" -ge 400 ]; then
+              reason="Supabase responded with HTTP $status."
+            else
+              echo "Supabase responded with HTTP $status: OK"
+              echo "ok=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+          echo "::error::$reason"
+          echo "ok=false" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+          exit 1
+
+      - name: Open an issue on failure
+        if: failure() && steps.ping.outputs.ok == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REASON: ${{ steps.ping.outputs.reason }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$ISSUE_TITLE\" in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Still failing: $REASON ($RUN_URL)"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$ISSUE_TITLE" \
+              --body "$(printf 'The daily Supabase ping failed.\n\n%s\n\nRun: %s\n\nThis issue closes itself once the ping succeeds again.' "$REASON" "$RUN_URL")"
+          fi
+
+      - name: Close the failure issue once pings succeed
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$ISSUE_TITLE\" in:title" --json number --jq '.[].number'); do
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Supabase ping succeeded again; closing."
+          done
