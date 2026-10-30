@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { Logo } from "@/components/logo"
+import { useActiveSection } from "@/components/motion/active-section"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -38,12 +39,17 @@ export function Navigation() {
     }
   }
 
+  const activeSection = useActiveSection()
+
   const navItems = [
-    { name: "About", href: "/#about" },
-    { name: "Services", href: "/#services" },
-    { name: "Work", href: "/projects" },
-    { name: "Blog", href: "/#blog" },
+    { name: "About", href: "/#about", section: "about" },
+    { name: "Services", href: "/#services", section: "services" },
+    { name: "Work", href: "/projects", section: "projects" },
+    { name: "Blog", href: "/#blog", section: "blog" },
   ]
+
+  const isItemActive = (item: (typeof navItems)[number]) =>
+    isHome ? activeSection === item.section : pathname === item.href
 
   return (
     <nav
@@ -63,10 +69,17 @@ export function Navigation() {
                 key={item.name}
                 href={item.href}
                 onClick={(e) => handleLinkClick(e, item.href)}
-                className="text-sm text-paper/60 hover:text-paper transition-colors relative group"
+                aria-current={isItemActive(item) ? "true" : undefined}
+                className={`text-sm hover:text-paper transition-colors relative group ${
+                  isItemActive(item) ? "text-paper" : "text-paper/60"
+                }`}
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-clay transition-all duration-300 group-hover:w-full" />
+                <span
+                  className={`absolute -bottom-1 left-0 h-px bg-clay transition-all duration-300 group-hover:w-full ${
+                    isItemActive(item) ? "w-full" : "w-0"
+                  }`}
+                />
               </Link>
             ))}
           </div>
@@ -111,7 +124,10 @@ export function Navigation() {
                 key={item.name}
                 href={item.href}
                 onClick={(e) => handleLinkClick(e, item.href)}
-                className="block text-paper/70 hover:text-paper py-1 transition-colors"
+                aria-current={isItemActive(item) ? "true" : undefined}
+                className={`block hover:text-paper py-1 transition-colors ${
+                  isItemActive(item) ? "text-paper" : "text-paper/70"
+                }`}
               >
                 {item.name}
               </Link>

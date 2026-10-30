@@ -26,8 +26,8 @@ export default async function Portfolio() {
 
   return (
     <div className="min-h-screen bg-ink text-paper">
-      <Navigation />
       <ActiveSectionProvider>
+        <Navigation />
         <main>
           <Hero />
           <About stats={aboutStats} bio={aboutBio} />
