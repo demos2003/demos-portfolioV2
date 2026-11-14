@@ -8,6 +8,7 @@ import { Projects } from "@/components/projects"
 import { Blog } from "@/components/blog"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
+import { Demi } from "@/components/demi/demi"
 import { ActiveSectionProvider } from "@/components/motion/active-section"
 import { getProjects } from "@/lib/data/projects"
 import { getBlogPosts } from "@/lib/data/blog"
@@ -40,6 +41,7 @@ export default async function Portfolio() {
         </main>
       </ActiveSectionProvider>
       <Footer />
+      <Demi />
     </div>
   )
 }

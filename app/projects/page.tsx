@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { Demi } from "@/components/demi/demi"
 import { Reveal } from "@/components/motion/reveal"
 import { ProjectsList } from "@/components/projects-list"
 import { getProjects } from "@/lib/data/projects"
@@ -29,6 +30,7 @@ export default async function ProjectsPage() {
         </section>
       </main>
       <Footer />
+      <Demi />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/motion/reveal"
 import { SectionGlow } from "@/components/motion/active-section"
 
-const STEPS = [
+export const STEPS = [
   {
     title: "Discovery",
     description:

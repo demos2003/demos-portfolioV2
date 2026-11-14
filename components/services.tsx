@@ -2,7 +2,7 @@ import { Bot, Code2, Smartphone, Palette, LayoutDashboard, Server, Lightbulb } f
 import { Reveal } from "@/components/motion/reveal"
 import { SectionGlow } from "@/components/motion/active-section"
 
-const SERVICES = [
+export const SERVICES = [
   {
     icon: Bot,
     title: "AI Agents & Workflow Automation",
