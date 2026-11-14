@@ -39,6 +39,12 @@ insert into about_stats (label, value, display_order) values
   ('Client Satisfaction', '100%', 3);
 
 insert into site_settings (key, value) values
+  ('education', '[
+    {"id": "edu-msc", "degree": "MSc Artificial Intelligence", "school": "Birmingham City University", "years": "2026 — Present", "displayOrder": 0},
+    {"id": "edu-bsc", "degree": "BSc Software Engineering", "school": "Babcock University", "years": "2019 — 2023", "displayOrder": 1}
+  ]'::jsonb);
+
+insert into site_settings (key, value) values
   ('about_bio', '[
     "I''m a passionate Full Stack Developer with expertise in modern web technologies. I love creating efficient, scalable, and user-friendly applications that solve real-world problems.",
     "My journey in software development started with curiosity about how things work behind the scenes. Today, I specialize in React, Node.js, Python, and cloud technologies, always staying updated with the latest industry trends.",

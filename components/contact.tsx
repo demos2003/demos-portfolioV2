@@ -9,6 +9,7 @@ import emailjs from "@emailjs/browser"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { submitContactMessage } from "@/lib/actions/contact"
+import { EMAILJS } from "@/lib/emailjs"
 import type { ContactInfo } from "@/lib/data/about"
 import { Reveal } from "@/components/motion/reveal"
 import { MagneticButton } from "@/components/motion/magnetic-button"
@@ -43,10 +44,10 @@ export function Contact({ contactInfo }: { contactInfo: ContactInfo }) {
 
     const [emailResult, dbResult] = await Promise.allSettled([
       emailjs.sendForm(
-        "service_a50v2vu", // Replace with your EmailJS service ID
-        "template_ysj7cqg", // Replace with your EmailJS template ID
+        EMAILJS.serviceId,
+        EMAILJS.templateId,
         form.current,
-        "VzuWI64-DSChqLogf" // Replace with your EmailJS public key
+        EMAILJS.publicKey
       ),
       submitContactMessage({
         name: formData.user_name,
