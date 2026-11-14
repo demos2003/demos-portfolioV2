@@ -10,6 +10,7 @@ export type DemiMood =
   | "thinking"
   | "talking"
   | "sad"
+  | "grumpy"
   | "sleepy"
   | "sleeping"
 
@@ -40,7 +41,7 @@ function Eyes({ mood }: { mood: DemiMood }) {
     )
   }
 
-  const ry = mood === "sleepy" ? 3 : mood === "curious" ? 8 : 7
+  const ry = mood === "sleepy" ? 3 : mood === "grumpy" ? 4.5 : mood === "curious" ? 8 : 7
   return (
     // Blink every few seconds.
     <motion.g
@@ -51,13 +52,23 @@ function Eyes({ mood }: { mood: DemiMood }) {
       {[37, 63].map((cx) => (
         <g key={cx}>
           <ellipse cx={cx} cy={50} rx={5.5} ry={ry} fill={INK} />
-          {mood !== "sleepy" && <circle cx={cx - 1.6} cy={47.4} r={2} fill={PAPER} />}
+          {mood !== "sleepy" && mood !== "grumpy" && (
+            <circle cx={cx - 1.6} cy={47.4} r={2} fill={PAPER} />
+          )}
         </g>
       ))}
       {mood === "sad" && (
         <>
-          <path d="M30 41 L42 44" {...stroke} strokeWidth={2.2} />
-          <path d="M70 41 L58 44" {...stroke} strokeWidth={2.2} />
+          <path d="M30 44 L42 40" {...stroke} strokeWidth={2.2} />
+          <path d="M70 44 L58 40" {...stroke} strokeWidth={2.2} />
+          {/* a single tear */}
+          <path d="M33 59 q-3.2 5 0 7.4 q3.2 -2.4 0 -7.4Z" fill="#8FD0FF" />
+        </>
+      )}
+      {mood === "grumpy" && (
+        <>
+          <path d="M29 38 L44 44" {...stroke} strokeWidth={2.8} />
+          <path d="M71 38 L56 44" {...stroke} strokeWidth={2.8} />
         </>
       )}
     </motion.g>
@@ -97,6 +108,8 @@ function Mouth({ mood }: { mood: DemiMood }) {
       return <circle cx={50} cy={65} r={2} fill={INK} />
     case "sad":
       return <path d="M43 68 Q50 61 57 68" {...stroke} />
+    case "grumpy":
+      return <path d="M45 67 Q50 63.5 55 67" {...stroke} />
     default:
       return <path d="M43 62 Q50 69 57 62" {...stroke} />
   }
