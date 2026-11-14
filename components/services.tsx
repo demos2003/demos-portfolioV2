@@ -1,8 +1,14 @@
-import { Code2, Smartphone, Palette, LayoutDashboard, Server, Lightbulb } from "lucide-react"
+import { Bot, Code2, Smartphone, Palette, LayoutDashboard, Server, Lightbulb } from "lucide-react"
 import { Reveal } from "@/components/motion/reveal"
 import { SectionGlow } from "@/components/motion/active-section"
 
 const SERVICES = [
+  {
+    icon: Bot,
+    title: "AI Agents & Workflow Automation",
+    description:
+      "Custom AI agents and automated workflows that take repetitive work off your team — connected to the tools and data you already use.",
+  },
   {
     icon: Code2,
     title: "Web Applications",
@@ -43,11 +49,11 @@ const SERVICES = [
 
 export function Services() {
   return (
-    <section id="services" className="relative py-28 sm:py-36 border-t border-paper/10">
+    <section id="services" className="relative isolate py-28 sm:py-36">
       <SectionGlow id="services" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <Reveal>
-          <span className="text-sm text-clay tracking-wide">Services</span>
+          <span className="text-sm text-signal tracking-wide">Services</span>
         </Reveal>
 
         <Reveal delay={100}>
@@ -60,7 +66,9 @@ export function Services() {
           {SERVICES.map((service, index) => (
             <Reveal key={service.title} delay={index * 100}>
               <div className="space-y-4">
-                <service.icon className="h-5 w-5 text-clay" strokeWidth={1.5} />
+                <span className="inline-flex h-11 w-11 items-center justify-center bg-surface border border-paper/10 text-signal">
+                  <service.icon className="h-5 w-5" strokeWidth={1.5} />
+                </span>
                 <h3 className="font-serif text-2xl text-paper">{service.title}</h3>
                 <p className="text-paper/60 leading-relaxed max-w-md">{service.description}</p>
               </div>

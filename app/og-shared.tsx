@@ -37,7 +37,7 @@ export async function generateOgImage() {
             width: 560,
             height: 560,
             borderRadius: 9999,
-            background: "radial-gradient(circle, rgba(181,113,75,0.18), rgba(16,16,16,0) 70%)",
+            background: "radial-gradient(circle, rgba(255,122,69,0.18), rgba(16,16,16,0) 70%)",
             display: "flex",
           }}
         />
@@ -54,7 +54,7 @@ export async function generateOgImage() {
               justifyContent: "center",
               fontFamily: "Fraunces",
               fontSize: 26,
-              color: "#B5714B",
+              color: "#FF7A45",
             }}
           >
             D
@@ -83,7 +83,7 @@ export async function generateOgImage() {
           }}
         >
           <span>Software</span>
-          <span style={{ color: "#B5714B" }}>Engineer</span>
+          <span style={{ color: "#FF7A45" }}>Engineer</span>
         </div>
 
         <div
@@ -97,7 +97,7 @@ export async function generateOgImage() {
             maxWidth: 760,
           }}
         >
-          Full-stack software engineer building thoughtful, fast, well-crafted products.
+          Full-stack software engineer building web and mobile products, AI agents, and automated workflows.
         </div>
       </div>
     ),

@@ -7,13 +7,13 @@ export function About({ stats, bio }: { stats: AboutStat[]; bio: string[] }) {
   const [firstParagraph, ...restParagraphs] = bio
 
   return (
-    <section id="about" className="relative py-28 sm:py-36">
+    <section id="about" className="relative isolate py-20 sm:py-24 bg-surface">
       <SectionGlow id="about" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-7 space-y-8">
             <Reveal>
-              <span className="text-sm text-clay tracking-wide">About</span>
+              <span className="text-sm text-signal tracking-wide">About</span>
             </Reveal>
 
             {firstParagraph && (
@@ -34,7 +34,7 @@ export function About({ stats, bio }: { stats: AboutStat[]; bio: string[] }) {
             {stats.map((stat, index) => (
               <Reveal key={stat.id} delay={index * 80}>
                 <div className="flex items-baseline justify-between py-6">
-                  <span className="font-serif text-4xl text-paper">{stat.value}</span>
+                  <span className="font-serif text-4xl text-signal">{stat.value}</span>
                   <span className="text-paper/50 text-sm text-right">{stat.label}</span>
                 </div>
               </Reveal>

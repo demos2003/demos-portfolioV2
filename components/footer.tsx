@@ -10,7 +10,7 @@ const SOCIALS = [
 export function Footer() {
   return (
     <footer className="border-t border-paper/10">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
         <Logo className="h-10 w-10" />
 
         <div className="flex items-center gap-6">

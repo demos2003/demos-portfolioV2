@@ -4,9 +4,9 @@ import type { SkillCategory } from "@/lib/data/skills"
 
 export function Skills({ categories: skillCategories }: { categories: SkillCategory[] }) {
   return (
-    <section id="skills" className="relative py-28 sm:py-36 border-t border-paper/10">
+    <section id="skills" className="relative isolate py-20 sm:py-24 bg-surface">
       <SectionGlow id="skills" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <SkillsCollapsible categories={skillCategories} />
       </div>
     </section>

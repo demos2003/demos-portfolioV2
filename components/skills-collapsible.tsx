@@ -14,7 +14,7 @@ export function SkillsCollapsible({ categories }: { categories: SkillCategory[] 
     <div>
       <Reveal>
         <div className="flex items-center gap-8">
-          <span className="text-sm text-clay tracking-wide">Skills</span>
+          <span className="text-sm text-signal tracking-wide">Skills</span>
           <button
             type="button"
             onClick={() => setIsOpen((prev) => !prev)}

@@ -79,18 +79,18 @@ export function TerminalCard() {
       <div className="p-4 font-mono text-[13px] leading-relaxed border-t border-paper/10 min-h-[110px]">
         {displayedLines.map((line, i) => (
           <div key={i} className="text-paper/70">
-            <span className="text-clay">{line.slice(0, 2)}</span>
+            <span className="text-signal">{line.slice(0, 2)}</span>
             {line.slice(2)}
           </div>
         ))}
         {!done && currentText && (
           <div className="text-paper/70">
-            <span className="text-clay">{currentText.slice(0, 2)}</span>
+            <span className="text-signal">{currentText.slice(0, 2)}</span>
             {currentText.slice(2)}
-            <span className="inline-block w-1.5 h-3.5 bg-clay/70 ml-0.5 animate-pulse" />
+            <span className="inline-block w-1.5 h-3.5 bg-signal/80 ml-0.5 animate-pulse" />
           </div>
         )}
-        {done && <span className="inline-block w-1.5 h-3.5 bg-clay/70 animate-pulse" />}
+        {done && <span className="inline-block w-1.5 h-3.5 bg-signal/80 animate-pulse" />}
       </div>
     </div>
   )

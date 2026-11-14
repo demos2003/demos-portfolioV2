@@ -96,11 +96,11 @@ export function ProjectsList({ projects, limit }: { projects: Project[]; limit?:
               </div>
 
               <div className="lg:w-1/2 w-full space-y-5">
-                <span className="font-serif text-lg text-paper/30">
+                <span className="font-serif text-lg text-signal">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <Link href={`/projects/${project.slug}`}>
-                  <h3 className="font-serif text-3xl sm:text-4xl text-paper hover:text-clay transition-colors">
+                  <h3 className="font-serif text-3xl sm:text-4xl text-paper hover:text-signal transition-colors">
                     {project.title}
                   </h3>
                 </Link>
@@ -111,7 +111,7 @@ export function ProjectsList({ projects, limit }: { projects: Project[]; limit?:
                 <div className="flex items-center gap-6">
                   <Link
                     href={`/projects/${project.slug}`}
-                    className="inline-flex items-center gap-1 text-paper hover:text-clay transition-colors group"
+                    className="inline-flex items-center gap-1 text-paper hover:text-signal transition-colors group"
                   >
                     Case Study
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
@@ -121,7 +121,7 @@ export function ProjectsList({ projects, limit }: { projects: Project[]; limit?:
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-paper hover:text-clay transition-colors group"
+                      className="inline-flex items-center gap-1 text-paper hover:text-signal transition-colors group"
                     >
                       View Live
                       <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -147,7 +147,7 @@ export function ProjectsList({ projects, limit }: { projects: Project[]; limit?:
           )}
           <Link
             href="/projects"
-            className="inline-flex items-center gap-1 text-paper hover:text-clay transition-colors group"
+            className="inline-flex items-center gap-1 bg-signal text-ink px-6 py-3 hover:bg-signal-hover transition-colors group"
           >
             View all projects
             <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />

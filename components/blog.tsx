@@ -5,11 +5,11 @@ import type { BlogPost } from "@/lib/data/blog"
 
 export function Blog({ posts: blogPosts }: { posts: BlogPost[] }) {
   return (
-    <section id="blog" className="relative py-28 sm:py-36 border-t border-paper/10">
+    <section id="blog" className="relative isolate py-20 sm:py-24 bg-surface">
       <SectionGlow id="blog" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <Reveal>
-          <span className="text-sm text-clay tracking-wide">Writing</span>
+          <span className="text-sm text-signal tracking-wide">Writing</span>
         </Reveal>
 
         <div className="mt-10 divide-y divide-paper/10 border-t border-paper/10">
@@ -24,7 +24,7 @@ export function Blog({ posts: blogPosts }: { posts: BlogPost[] }) {
                 <span className="text-sm text-paper/40 sm:w-32 shrink-0">{post.postDate}</span>
 
                 <div className="flex-1 space-y-2">
-                  <h3 className="font-serif text-2xl text-paper group-hover:text-clay transition-colors flex items-center gap-2">
+                  <h3 className="font-serif text-2xl text-paper group-hover:text-signal transition-colors flex items-center gap-2">
                     {post.title}
                     <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </h3>

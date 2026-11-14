@@ -42,7 +42,7 @@ export function Navigation() {
     { name: "About", href: "/#about" },
     { name: "Services", href: "/#services" },
     { name: "Work", href: "/projects" },
-    { name: "Blog", href: "/#blog" },
+    { name: "Writing", href: "/#blog" },
   ]
 
   return (
@@ -51,7 +51,7 @@ export function Navigation() {
         scrolled ? "bg-ink/90 backdrop-blur-sm border-b border-paper/10" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <div className="flex items-center justify-between h-20">
           <Link href="/#home" onClick={(e) => handleLinkClick(e, "/#home")} aria-label="Demos">
             <Logo />
@@ -66,7 +66,7 @@ export function Navigation() {
                 className="text-sm text-paper/60 hover:text-paper transition-colors relative group"
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-clay transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-signal transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
           </div>
@@ -75,7 +75,7 @@ export function Navigation() {
             <Link href="/#contact" onClick={(e) => handleLinkClick(e, "/#contact")}>
               <Button
                 variant="outline"
-                className="border-paper/20 text-paper bg-transparent hover:bg-paper hover:text-ink transition-colors rounded-none"
+                className="border-signal bg-signal text-ink hover:bg-signal-hover hover:border-signal-hover transition-colors rounded-none"
               >
                 Let&apos;s Talk
               </Button>
@@ -117,7 +117,7 @@ export function Navigation() {
               </Link>
             ))}
             <Link href="/#contact" onClick={(e) => handleLinkClick(e, "/#contact")}>
-              <Button className="w-full mt-2 bg-paper text-ink hover:bg-paper/90 rounded-none">
+              <Button className="w-full mt-2 bg-signal text-ink hover:bg-signal-hover rounded-none">
                 Let&apos;s Talk
               </Button>
             </Link>
