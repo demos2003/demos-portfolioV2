@@ -5,11 +5,11 @@ import type { Project } from "@/lib/data/projects"
 
 export function Projects({ projects }: { projects: Project[] }) {
   return (
-    <section id="projects" className="relative py-28 sm:py-36 border-t border-paper/10">
+    <section id="projects" className="relative isolate py-28 sm:py-36">
       <SectionGlow id="projects" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <Reveal>
-          <span className="text-sm text-clay tracking-wide">Projects</span>
+          <span className="text-sm text-signal tracking-wide">Selected Work</span>
         </Reveal>
 
         <ProjectsList projects={projects} limit={3} />

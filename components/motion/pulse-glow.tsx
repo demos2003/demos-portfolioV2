@@ -19,8 +19,8 @@ export function PulseGlow({
           ? undefined
           : {
               boxShadow: [
-                "0 0 0 0 rgba(181,113,75,0.45)",
-                "0 0 0 12px rgba(181,113,75,0)",
+                "0 0 0 0 rgba(255,122,69,0.45)",
+                "0 0 0 12px rgba(255,122,69,0)",
               ],
             }
       }

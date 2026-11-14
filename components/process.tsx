@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/motion/reveal"
 import { SectionGlow } from "@/components/motion/active-section"
 
-const STEPS = [
+export const STEPS = [
   {
     title: "Discovery",
     description:
@@ -26,11 +26,11 @@ const STEPS = [
 
 export function Process() {
   return (
-    <section id="process" className="relative py-28 sm:py-36 border-t border-paper/10">
+    <section id="process" className="relative isolate py-28 sm:py-36 border-t border-paper/10">
       <SectionGlow id="process" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <Reveal>
-          <span className="text-sm text-clay tracking-wide">Process</span>
+          <span className="text-sm text-signal tracking-wide">Process</span>
         </Reveal>
 
         <Reveal delay={100}>
@@ -44,7 +44,7 @@ export function Process() {
             <Reveal key={step.title} delay={index * 80}>
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-12 py-8">
                 <div className="sm:w-1/3 flex items-baseline gap-4">
-                  <span className="font-serif text-2xl text-paper/30">
+                  <span className="font-serif text-2xl text-signal">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="font-serif text-2xl text-paper">{step.title}</h3>

@@ -9,7 +9,7 @@ export function Logo({ className = "h-12 w-12" }: { className?: string }) {
         fontFamily="Georgia, 'Times New Roman', serif"
         fontSize="31"
         fontWeight="600"
-        fill="#B5714B"
+        fill="#FF7A45"
         transform="rotate(-12 16 16)"
       >
         D

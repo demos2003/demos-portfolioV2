@@ -75,7 +75,7 @@ export function SectionGlow({ id }: { id: string }) {
       transition={{ duration: 0.8 }}
       style={{
         background:
-          "radial-gradient(60% 50% at 20% 50%, rgba(181,113,75,0.10), transparent 70%)",
+          "radial-gradient(60% 50% at 20% 50%, rgba(255,122,69,0.08), transparent 70%)",
       }}
     />
   )

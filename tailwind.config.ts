@@ -63,6 +63,17 @@ const config: Config = {
         ink: "#101010",
         paper: "#F4F0EA",
         clay: "#B5714B",
+        // 60 / 30 / 10 roles on the public site:
+        //   ink    (60) -- page background
+        //   surface (30) -- secondary: a lighter warm dark for alternating
+        //                   sections (About, Skills, Writing) and tiles
+        //   signal  (10) -- loud: primary CTAs, highlights, the Contact glow
+        // paper stays the text colour throughout; the site never goes light.
+        surface: "#241F1C",
+        signal: {
+          DEFAULT: "#FF7A45",
+          hover: "#FF9466",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

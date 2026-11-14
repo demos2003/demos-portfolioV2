@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { Demi } from "@/components/demi/demi"
 import { Reveal } from "@/components/motion/reveal"
 import { ProjectsList } from "@/components/projects-list"
 import { getProjects } from "@/lib/data/projects"
@@ -18,9 +19,9 @@ export default async function ProjectsPage() {
       <Navigation />
       <main>
         <section className="relative pt-40 pb-28 sm:pb-36">
-          <div className="max-w-7xl mx-auto px-6 sm:px-8">
+          <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
             <Reveal>
-              <span className="text-sm text-clay tracking-wide">Work</span>
+              <span className="text-sm text-signal tracking-wide">Work</span>
               <h1 className="mt-4 font-serif text-4xl sm:text-6xl text-paper">All Projects</h1>
             </Reveal>
 
@@ -29,6 +30,7 @@ export default async function ProjectsPage() {
         </section>
       </main>
       <Footer />
+      <Demi />
     </div>
   )
 }

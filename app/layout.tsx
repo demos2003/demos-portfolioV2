@@ -18,7 +18,7 @@ const inter = Inter({
 
 const siteUrl = 'https://demosportfolio.netlify.app'
 const shareDescription =
-  'Full-stack software engineer building thoughtful, fast, well-crafted products.'
+  'Full-stack software engineer building web and mobile products, AI agents, and automated workflows.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

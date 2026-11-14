@@ -10,7 +10,7 @@ function CaseStudySection({ label, content }: { label: string; content: string |
   return (
     <Reveal className="border-t border-paper/10 py-14 sm:py-20">
       <div className="grid lg:grid-cols-[200px_1fr] gap-6 lg:gap-16">
-        <span className="text-sm text-clay tracking-wide">{label}</span>
+        <span className="text-sm text-signal tracking-wide">{label}</span>
         <p className="text-paper/70 leading-relaxed whitespace-pre-line max-w-2xl">{content}</p>
       </div>
     </Reveal>
@@ -21,7 +21,7 @@ export function ProjectCaseStudy({ project }: { project: Project }) {
   return (
     <article>
       <section className="pt-40 pb-16 sm:pb-20">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
           <Reveal>
             <Link
               href="/projects"
@@ -52,7 +52,7 @@ export function ProjectCaseStudy({ project }: { project: Project }) {
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-paper hover:text-clay transition-colors group"
+                  className="inline-flex items-center gap-1 text-paper hover:text-signal transition-colors group"
                 >
                   View Live
                   <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -63,7 +63,7 @@ export function ProjectCaseStudy({ project }: { project: Project }) {
         </div>
       </section>
 
-      <Reveal className="max-w-7xl mx-auto px-6 sm:px-8">
+      <Reveal className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <div className="relative aspect-video overflow-hidden border border-paper/10">
           <Image
             src={project.imageUrl || "/placeholder.svg"}
@@ -75,7 +75,7 @@ export function ProjectCaseStudy({ project }: { project: Project }) {
         </div>
       </Reveal>
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <CaseStudySection label="Problem" content={project.problemStatement} />
         <CaseStudySection label="Process" content={project.process} />
         <CaseStudySection label="Solution" content={project.solution} />
@@ -83,7 +83,7 @@ export function ProjectCaseStudy({ project }: { project: Project }) {
 
         {project.galleryImages.length > 0 && (
           <Reveal className="border-t border-paper/10 py-14 sm:py-20">
-            <span className="text-sm text-clay tracking-wide">Gallery</span>
+            <span className="text-sm text-signal tracking-wide">Gallery</span>
             <div className="mt-6 grid sm:grid-cols-2 gap-6">
               {project.galleryImages.map((src) => (
                 <div key={src} className="relative aspect-video overflow-hidden border border-paper/10">

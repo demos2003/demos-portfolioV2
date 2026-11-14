@@ -12,16 +12,57 @@ const SOCIALS = [
   { icon: Twitter, href: "https://x.com/NasiruDev", label: "Twitter" },
 ]
 
+// Film grain: fractal noise tinted to `paper`, thresholded so only the brighter
+// specks survive. Tiled as a data URI so it costs no request and no JS.
+const GRAIN = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'>
+    <filter id='n'>
+      <feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/>
+      <feColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.94  0 0 0 0 0.92  0 0 0 1.7 -0.75'/>
+    </filter>
+    <rect width='100%' height='100%' filter='url(#n)'/>
+  </svg>`
+)}")`
+
+// Static backdrop texture: a drafting grid that fades out from the top-right,
+// with grain over the whole section. Both dissolve before the bottom edge so
+// the hero blends into the next section without a seam.
+function HeroTexture() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(244,240,234,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(244,240,234,0.1) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+          maskImage: "radial-gradient(90% 80% at 85% 15%, #000 0%, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(90% 80% at 85% 15%, #000 0%, transparent 75%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-[0.22]"
+        style={{
+          backgroundImage: GRAIN,
+          maskImage: "linear-gradient(to bottom, #000 70%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, #000 70%, transparent)",
+        }}
+      />
+    </div>
+  )
+}
+
 export function Hero() {
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-24 overflow-hidden">
+    <section id="home" className="relative isolate min-h-screen flex items-center pt-24 overflow-hidden">
+      <HeroTexture />
       <SectionGlow id="home" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <div className="lg:col-span-7 space-y-10">
             <Reveal>
               <div className="flex items-center gap-2 text-sm text-paper/50">
-                <span className="w-1.5 h-1.5 rounded-full bg-clay" />
+                <span className="w-1.5 h-1.5 rounded-full bg-signal" />
                 Available for new projects
               </div>
             </Reveal>
@@ -30,15 +71,15 @@ export function Hero() {
               <h1 className="font-serif text-6xl sm:text-7xl lg:text-8xl leading-[0.95] tracking-tight text-paper">
                 Software
                 <br />
-                <span className="text-clay">Engineer</span>
+                <span className="text-signal">Engineer</span>
               </h1>
             </Reveal>
 
             <Reveal delay={200}>
               <p className="text-paper/60 text-lg max-w-lg leading-relaxed">
-                I&apos;m Nasiru Iyidemilade. I craft full-stack applications with modern
-                technologies, focusing on performance, user experience, and scalable
-                architecture.
+                I&apos;m Nasiru Iyidemilade. I build full-stack applications, AI agents,
+                and automated workflows — with a focus on performance, user experience,
+                and scalable architecture.
               </p>
             </Reveal>
 
@@ -49,7 +90,7 @@ export function Hero() {
                     <a href="#projects">
                       <Button
                         size="lg"
-                        className="bg-paper text-ink hover:bg-paper/90 rounded-none px-8 group"
+                        className="bg-signal text-ink hover:bg-signal-hover rounded-none px-8 group"
                       >
                         View My Work
                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

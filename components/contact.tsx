@@ -12,10 +12,9 @@ import { submitContactMessage } from "@/lib/actions/contact"
 import type { ContactInfo } from "@/lib/data/about"
 import { Reveal } from "@/components/motion/reveal"
 import { MagneticButton } from "@/components/motion/magnetic-button"
-import { SectionGlow } from "@/components/motion/active-section"
 
 const fieldClassName =
-  "bg-transparent border-0 border-b border-paper/20 rounded-none px-0 text-paper placeholder:text-paper/40 focus-visible:ring-0 focus-visible:border-clay transition-colors"
+  "bg-transparent border-0 border-b border-paper/20 rounded-none px-0 text-paper placeholder:text-paper/40 focus-visible:ring-0 focus-visible:border-signal transition-colors"
 
 export function Contact({ contactInfo }: { contactInfo: ContactInfo }) {
   const [formData, setFormData] = useState({
@@ -76,17 +75,31 @@ export function Contact({ contactInfo }: { contactInfo: ContactInfo }) {
   }
 
   return (
-    <section id="contact" className="relative py-28 sm:py-36 border-t border-paper/10">
-      <SectionGlow id="contact" />
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+    <section
+      id="contact"
+      className="relative isolate overflow-hidden py-24 sm:py-32 border-t border-paper/10 text-paper"
+    >
+      {/* Signal stays the accent here, not the surface: a warm bloom rising
+          from the bottom-left corner instead of a full-bleed orange band. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(70% 90% at 0% 100%, rgba(255,122,69,0.22), transparent 65%)",
+        }}
+      />
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16">
         <Reveal>
-          <span className="text-sm text-clay tracking-wide">Contact</span>
+          <span className="text-sm text-signal tracking-wide">Contact</span>
         </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mt-10">
           <div className="lg:col-span-5 space-y-8">
             <Reveal delay={100}>
-              <h3 className="font-serif text-3xl sm:text-4xl text-paper">Let&apos;s work together</h3>
+              <h3 className="font-serif text-3xl sm:text-4xl text-paper">
+                Let&apos;s work <span className="text-signal">together</span>
+              </h3>
               <p className="text-paper/60 text-lg mt-4 max-w-md">
                 I&apos;m always interested in new opportunities and exciting projects. Whether
                 you have a question or just want to say hi, feel free to reach out.
@@ -136,7 +149,7 @@ export function Contact({ contactInfo }: { contactInfo: ContactInfo }) {
                   type="submit"
                   disabled={isLoading}
                   size="lg"
-                  className="bg-paper text-ink hover:bg-paper/90 rounded-none px-8 group"
+                  className="bg-signal text-ink hover:bg-signal-hover rounded-none px-8 group"
                 >
                   {isLoading ? "Sending..." : "Send Message"}
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -152,8 +165,8 @@ export function Contact({ contactInfo }: { contactInfo: ContactInfo }) {
 
 function ContactDetail({ icon, value }: { icon: React.ReactNode; value: string }) {
   return (
-    <div className="flex items-center gap-3 text-paper/70">
-      <span className="text-paper/40">{icon}</span>
+    <div className="flex items-center gap-3 text-paper/80">
+      <span className="text-signal">{icon}</span>
       <span>{value}</span>
     </div>
   )

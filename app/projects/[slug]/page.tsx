@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { Demi } from "@/components/demi/demi"
 import { ProjectCaseStudy } from "@/components/project-case-study"
 import { getProjectBySlug, getProjects } from "@/lib/data/projects"
 
@@ -47,6 +48,7 @@ export default async function ProjectPage({
         <ProjectCaseStudy project={project} />
       </main>
       <Footer />
+      <Demi />
     </div>
   )
 }
