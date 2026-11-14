@@ -7,6 +7,16 @@ export type AboutStat = {
   displayOrder: number
 }
 
+export type EducationEntry = {
+  id: string
+  degree: string
+  school: string
+  years: string
+  displayOrder: number
+}
+
+export type EducationInput = Omit<EducationEntry, "id">
+
 export type ContactInfo = {
   email: string
   phone: string
@@ -85,4 +95,32 @@ export async function getContactInfo(): Promise<ContactInfo> {
 
 export async function updateContactInfo(info: ContactInfo) {
   await setSetting("contact_info", info)
+}
+
+// Education is a short list edited as a whole, so it lives in site_settings
+// as one JSON array rather than in its own table.
+export async function getEducation(): Promise<EducationEntry[]> {
+  const entries = await getSetting<EducationEntry[]>("education", [])
+  return [...entries].sort((a, b) => a.displayOrder - b.displayOrder)
+}
+
+export async function createEducationEntry(input: EducationInput) {
+  const entries = await getEducation()
+  await setSetting("education", [...entries, { id: crypto.randomUUID(), ...input }])
+}
+
+export async function updateEducationEntry(id: string, input: EducationInput) {
+  const entries = await getEducation()
+  await setSetting(
+    "education",
+    entries.map((entry) => (entry.id === id ? { id, ...input } : entry))
+  )
+}
+
+export async function deleteEducationEntry(id: string) {
+  const entries = await getEducation()
+  await setSetting(
+    "education",
+    entries.filter((entry) => entry.id !== id)
+  )
 }

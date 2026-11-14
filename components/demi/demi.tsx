@@ -11,7 +11,9 @@ import {
   useSpring,
 } from "framer-motion"
 import { ArrowUp, RotateCcw, X } from "lucide-react"
+import emailjs from "@emailjs/browser"
 import { DemiSprite, type DemiMood } from "@/components/demi/demi-sprite"
+import { DEMI_EVENT_MARK, EMAILJS } from "@/lib/emailjs"
 
 type ChatMessage = { role: "user" | "assistant"; content: string }
 type Wakefulness = "awake" | "sleepy" | "sleeping"
@@ -103,6 +105,26 @@ function renderContent(content: string) {
   return parts
 }
 
+// When Demi stores a visitor's message, also email it to Nasiru using the same
+// EmailJS template as the contact form. The message is already saved in the
+// admin inbox by this point, so a failed email loses nothing.
+function handleEvent(json: string) {
+  try {
+    const event = JSON.parse(json)
+    if (event.type !== "message_sent") return
+    emailjs
+      .send(
+        EMAILJS.serviceId,
+        EMAILJS.templateId,
+        { user_name: event.name, user_email: event.email, message: `[via Demi] ${event.message}` },
+        EMAILJS.publicKey
+      )
+      .catch((error) => console.error("[demi] email notification failed", error))
+  } catch {
+    // Malformed event: ignore it and keep showing the reply.
+  }
+}
+
 function useDemiChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [busy, setBusy] = useState(false)
@@ -130,6 +152,8 @@ function useDemiChat() {
     const controller = new AbortController()
     abortRef.current = controller
     let reply = ""
+    let received = ""
+    let eventsHandled = 0
 
     try {
       const response = await fetch("/api/demi", {
@@ -150,7 +174,17 @@ function useDemiChat() {
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-        reply += decoder.decode(value, { stream: true })
+        received += decoder.decode(value, { stream: true })
+
+        // The stream is Demi's text with occasional events wrapped in marker
+        // characters. Odd-numbered segments are events; a trailing one may
+        // still be arriving, so only complete ones are acted on.
+        const segments = received.split(DEMI_EVENT_MARK)
+        const complete = Math.floor((segments.length - 1) / 2)
+        for (; eventsHandled < complete; eventsHandled++) {
+          handleEvent(segments[eventsHandled * 2 + 1])
+        }
+        reply = segments.filter((_, i) => i % 2 === 0).join("")
         setReply(reply)
       }
       if (!reply.trim()) setReply("Sorry, I didn't catch that. Could you rephrase?")

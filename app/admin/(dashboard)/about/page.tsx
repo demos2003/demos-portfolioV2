@@ -1,17 +1,20 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus } from "lucide-react"
-import { getAboutStats, getAboutBio, getContactInfo } from "@/lib/data/about"
+import { getAboutStats, getAboutBio, getContactInfo, getEducation } from "@/lib/data/about"
 import { BioForm } from "./bio-form"
 import { ContactInfoForm } from "./contact-info-form"
 import { StatsList } from "./stats-list"
 import { StatFormDialog } from "./stat-form-dialog"
+import { EducationList } from "./education-list"
+import { EducationFormDialog } from "./education-form-dialog"
 
 export default async function AdminAboutPage() {
-  const [stats, bio, contactInfo] = await Promise.all([
+  const [stats, bio, contactInfo, education] = await Promise.all([
     getAboutStats(),
     getAboutBio(),
     getContactInfo(),
+    getEducation(),
   ])
 
   return (
@@ -49,6 +52,22 @@ export default async function AdminAboutPage() {
         </CardHeader>
         <CardContent>
           <StatsList stats={stats} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle>Education</CardTitle>
+          <EducationFormDialog
+            trigger={
+              <Button size="sm">
+                <Plus className="mr-2 h-4 w-4" /> Add Education
+              </Button>
+            }
+          />
+        </CardHeader>
+        <CardContent>
+          <EducationList entries={education} />
         </CardContent>
       </Card>
     </div>

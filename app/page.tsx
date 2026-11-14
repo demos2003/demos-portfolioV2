@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/navigation"
 import { Hero } from "@/components/hero"
 import { About } from "@/components/about"
+import { Education } from "@/components/education"
 import { Services } from "@/components/services"
 import { Process } from "@/components/process"
 import { Skills } from "@/components/skills"
@@ -13,16 +14,17 @@ import { ActiveSectionProvider } from "@/components/motion/active-section"
 import { getProjects } from "@/lib/data/projects"
 import { getBlogPosts } from "@/lib/data/blog"
 import { getSkillCategories } from "@/lib/data/skills"
-import { getAboutStats, getAboutBio, getContactInfo } from "@/lib/data/about"
+import { getAboutStats, getAboutBio, getContactInfo, getEducation } from "@/lib/data/about"
 
 export default async function Portfolio() {
-  const [projects, posts, skillCategories, aboutStats, aboutBio, contactInfo] = await Promise.all([
+  const [projects, posts, skillCategories, aboutStats, aboutBio, contactInfo, education] = await Promise.all([
     getProjects(),
     getBlogPosts(),
     getSkillCategories(),
     getAboutStats(),
     getAboutBio(),
     getContactInfo(),
+    getEducation(),
   ])
 
   return (
@@ -32,6 +34,7 @@ export default async function Portfolio() {
         <main>
           <Hero />
           <About stats={aboutStats} bio={aboutBio} />
+          <Education entries={education} />
           <Services />
           <Process />
           <Skills categories={skillCategories} />

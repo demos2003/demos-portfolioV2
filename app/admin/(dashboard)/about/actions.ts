@@ -7,6 +7,9 @@ import {
   createAboutStat,
   updateAboutStat,
   deleteAboutStat,
+  createEducationEntry,
+  updateEducationEntry,
+  deleteEducationEntry,
 } from "@/lib/data/about"
 
 export type FormResult = { error?: string }
@@ -78,5 +81,35 @@ export async function saveStatAction(formData: FormData): Promise<FormResult> {
 
 export async function deleteStatAction(id: string) {
   await deleteAboutStat(id)
+  revalidateAboutPaths()
+}
+
+export async function saveEducationAction(formData: FormData): Promise<FormResult> {
+  const id = String(formData.get("id") ?? "")
+  const degree = String(formData.get("degree") ?? "").trim()
+  const school = String(formData.get("school") ?? "").trim()
+  const years = String(formData.get("years") ?? "").trim()
+  const displayOrder = Number(formData.get("displayOrder") ?? 0) || 0
+
+  if (!degree || !school || !years) {
+    return { error: "Degree, school and years are required" }
+  }
+
+  try {
+    if (id) {
+      await updateEducationEntry(id, { degree, school, years, displayOrder })
+    } else {
+      await createEducationEntry({ degree, school, years, displayOrder })
+    }
+  } catch (error: any) {
+    return { error: error?.message ?? "Something went wrong" }
+  }
+
+  revalidateAboutPaths()
+  return {}
+}
+
+export async function deleteEducationAction(id: string) {
+  await deleteEducationEntry(id)
   revalidateAboutPaths()
 }

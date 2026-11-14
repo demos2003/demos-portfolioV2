@@ -5,6 +5,7 @@ import { z } from "zod"
 import { createContactSubmission } from "@/lib/data/contact"
 import { getDemiSystemPrompt } from "@/lib/demi/context"
 import { allow, clientKey } from "@/lib/demi/rate-limit"
+import { DEMI_EVENT_MARK } from "@/lib/emailjs"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -72,6 +73,9 @@ export async function POST(request: Request) {
 
   const client = new Anthropic()
 
+  // Set once the response stream is open; lets a tool push an event to the page.
+  let emitEvent: ((event: Record<string, string>) => void) | null = null
+
   // The model's tool input is validated here rather than by the SDK: its Zod
   // helper targets Zod 4 and this project is on Zod 3.
   const sendMessage = betaTool({
@@ -105,6 +109,10 @@ export async function POST(request: Request) {
         await createContactSubmission({ name, email, message: `[via Demi] ${message}` })
         revalidatePath("/admin/messages")
         revalidatePath("/admin")
+        // The inbox is the record of truth. Email goes out through EmailJS,
+        // which only works from a browser, so ask the visitor's page to send
+        // the notification.
+        emitEvent?.({ type: "message_sent", name, email, message })
         return "Sent. The message is in Nasiru's inbox."
       } catch (error) {
         console.error("[demi] failed to store message", error)
@@ -139,6 +147,10 @@ export async function POST(request: Request) {
         wroteText = true
         controller.enqueue(encoder.encode(chunk))
       }
+      emitEvent = (event) =>
+        controller.enqueue(
+          encoder.encode(`${DEMI_EVENT_MARK}${JSON.stringify(event)}${DEMI_EVENT_MARK}`)
+        )
 
       try {
         for await (const messageStream of runner) {
