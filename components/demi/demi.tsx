@@ -10,9 +10,10 @@ import {
   useReducedMotion,
   useSpring,
 } from "framer-motion"
-import { ArrowUp, RotateCcw, X } from "lucide-react"
+import { ArrowRight, ArrowUp, Home, RotateCcw, X } from "lucide-react"
 import emailjs from "@emailjs/browser"
 import { DemiSprite, type DemiMood } from "@/components/demi/demi-sprite"
+import { DemiHome } from "@/components/demi/demi-home"
 import { DEMI_EVENT_MARK, EMAILJS } from "@/lib/emailjs"
 
 type ChatMessage = { role: "user" | "assistant"; content: string }
@@ -27,6 +28,10 @@ const SIZE = 76
 // the fuse is shorter: once woken, Demi heads back to bed quickly.
 const IDLE_MS = 60_000
 const NIGHT_IDLE_MS = 25_000
+// Ignored for this long (no tap, petting or chat), Demi stops following and
+// trudges sadly back to its corner, staying there until someone taps it.
+const IGNORED_MS = 15_000
+const SULK_LINES = ["Oh... okay. I'll be in my corner.", "I'll just wait over here, then.", "Nobody wants to play?"]
 // A tab left in the background for this long comes back to a sleeping Demi.
 const AWAY_MS = 60_000
 // A visitor who hasn't been here for this long finds Demi asleep on arrival.
@@ -219,6 +224,8 @@ export function Demi() {
   const [wakefulness, setWakefulness] = useState<Wakefulness>("awake")
   const [night, setNight] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+  const [sulking, setSulking] = useState(false)
+  const [homeOpen, setHomeOpen] = useState(false)
   const [flash, setFlash] = useState<DemiMood | null>(null)
   const [near, setNear] = useState(false)
   const [moving, setMoving] = useState(false)
@@ -237,6 +244,8 @@ export function Demi() {
 
   const cursor = useRef({ x: 0, y: 0, movedAt: 0, known: false })
   const lastActivity = useRef(0)
+  // Last time the visitor did something *to Demi*, as opposed to the page.
+  const lastInteraction = useRef(0)
   const nextWanderAt = useRef(0)
   const petting = useRef({ distance: 0, at: 0 })
   const spokenSections = useRef(new Set<string>())
@@ -248,8 +257,8 @@ export function Demi() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   // Latest values for the long-lived listeners and timers below.
-  const live = useRef({ wakefulness, chatOpen, night, busy: chat.busy, reduceMotion })
-  live.current = { wakefulness, chatOpen, night, busy: chat.busy, reduceMotion }
+  const live = useRef({ wakefulness, chatOpen, homeOpen, sulking, night, busy: chat.busy, reduceMotion })
+  live.current = { wakefulness, chatOpen, homeOpen, sulking, night, busy: chat.busy, reduceMotion }
 
   const goTo = useCallback(
     (px: number, py: number) => {
@@ -289,6 +298,8 @@ export function Demi() {
   const wake = useCallback(() => {
     clearTimeout(sleepTimer.current)
     lastActivity.current = Date.now()
+    lastInteraction.current = Date.now()
+    setSulking(false)
     setWakefulness("awake")
     flashMood("excited", 1800)
     if (missedYou.current) {
@@ -309,6 +320,7 @@ export function Demi() {
     x.jump(home.x)
     y.jump(home.y)
     lastActivity.current = Date.now()
+    lastInteraction.current = Date.now()
 
     const nightNow = isNight()
     setNight(nightNow)
@@ -412,7 +424,16 @@ export function Demi() {
 
       if (state.wakefulness !== "awake") return
 
+      if (state.homeOpen) {
+        // Demi is at home with the visitor: nothing to follow, nobody ignoring it.
+        lastActivity.current = now
+        lastInteraction.current = now
+        return
+      }
+
       if (state.chatOpen || state.busy) {
+        // Chatting counts as attention for as long as it lasts.
+        lastInteraction.current = now
         goHome()
         return
       }
@@ -424,6 +445,18 @@ export function Demi() {
       }
 
       if (state.reduceMotion) return
+
+      if (state.sulking) {
+        goHome()
+        return
+      }
+      if (now - lastInteraction.current > IGNORED_MS) {
+        setSulking(true)
+        goHome()
+        flashMood("sad", 7000)
+        say(SULK_LINES[Math.floor(Math.random() * SULK_LINES.length)])
+        return
+      }
 
       const c = cursor.current
       if (c.known && now - c.movedAt < 5000) {
@@ -440,7 +473,7 @@ export function Demi() {
       }
     }, 300)
     return () => clearInterval(tick)
-  }, [fallAsleep, goHome, goTo, targetX, targetY])
+  }, [fallAsleep, flashMood, goHome, goTo, say, targetX, targetY])
 
   // Per-frame: lean into movement, look at the cursor, notice it getting close.
   useAnimationFrame(() => {
@@ -490,6 +523,8 @@ export function Demi() {
       wake()
       return
     }
+    lastInteraction.current = Date.now()
+    setSulking(false)
     setLine(null)
     setChatOpen((open) => !open)
     flashMood("excited", 900)
@@ -505,8 +540,24 @@ export function Demi() {
     p.at = now
     if (p.distance > 320) {
       p.distance = 0
+      lastInteraction.current = now
+      setSulking(false)
       flashMood("love", 2600)
     }
+  }
+
+  const closeHome = useCallback(() => {
+    setHomeOpen(false)
+    lastInteraction.current = Date.now()
+    goHome()
+    say("Thanks for visiting!")
+  }, [goHome, say])
+
+  function openHome() {
+    setChatOpen(false)
+    setLine(null)
+    setSulking(false)
+    setHomeOpen(true)
   }
 
   function submit(text: string) {
@@ -573,6 +624,16 @@ export function Demi() {
                 </button>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={openHome}
+              className="group flex items-center gap-2 border-b border-paper/10 px-4 py-2.5 text-left text-xs text-paper/70 hover:bg-paper/5 hover:text-signal transition-colors"
+            >
+              <Home className="h-3.5 w-3.5" />
+              Visit Demi&apos;s home
+              <ArrowRight className="ml-auto h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            </button>
 
             <div
               ref={scrollRef}
@@ -669,9 +730,12 @@ export function Demi() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>{homeOpen && <DemiHome onClose={closeHome} />}</AnimatePresence>
+
       <motion.div
         className="fixed left-0 top-0 z-50"
-        style={{ x, y, width: SIZE, height: SIZE }}
+        // While the visitor is inside the house, Demi is in there with them.
+        style={{ x, y, width: SIZE, height: SIZE, display: homeOpen ? "none" : undefined }}
       >
         <AnimatePresence>
           {line && !chatOpen && (
