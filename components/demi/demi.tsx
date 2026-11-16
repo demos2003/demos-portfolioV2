@@ -130,6 +130,30 @@ function handleEvent(json: string) {
   }
 }
 
+// Tracks the area actually visible on phones (shrinks when the keyboard opens),
+// so the chat panel can sit inside it instead of behind the keyboard.
+function useVisibleArea() {
+  const [area, setArea] = useState({ mobile: false, height: 0, inset: 0 })
+  useEffect(() => {
+    const update = () => {
+      const vv = window.visualViewport
+      const height = vv?.height ?? window.innerHeight
+      const inset = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0
+      setArea({ mobile: document.documentElement.clientWidth < 640, height, inset })
+    }
+    update()
+    window.addEventListener("resize", update)
+    window.visualViewport?.addEventListener("resize", update)
+    window.visualViewport?.addEventListener("scroll", update)
+    return () => {
+      window.removeEventListener("resize", update)
+      window.visualViewport?.removeEventListener("resize", update)
+      window.visualViewport?.removeEventListener("scroll", update)
+    }
+  }, [])
+  return area
+}
+
 function useDemiChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [busy, setBusy] = useState(false)
@@ -219,6 +243,7 @@ function useDemiChat() {
 export function Demi() {
   const reduceMotion = useReducedMotion()
   const chat = useDemiChat()
+  const area = useVisibleArea()
 
   const [mounted, setMounted] = useState(false)
   const [wakefulness, setWakefulness] = useState<Wakefulness>("awake")
@@ -242,7 +267,7 @@ export function Demi() {
   const eyeX = useMotionValue(0)
   const eyeY = useMotionValue(0)
 
-  const cursor = useRef({ x: 0, y: 0, movedAt: 0, known: false })
+  const cursor = useRef({ x: 0, y: 0, movedAt: 0, known: false, touch: false, holding: false })
   const lastActivity = useRef(0)
   // Last time the visitor did something *to Demi*, as opposed to the page.
   const lastInteraction = useRef(0)
@@ -359,8 +384,56 @@ export function Demi() {
     const onPointerMove = (e: PointerEvent) => {
       active()
       if (e.pointerType === "mouse") {
-        cursor.current = { x: e.clientX, y: e.clientY, movedAt: Date.now(), known: true }
+        cursor.current = { x: e.clientX, y: e.clientY, movedAt: Date.now(), known: true, touch: false, holding: false }
       }
+    }
+
+    // Phones: press and hold anywhere and Demi follows the finger.
+    let holdTimer: ReturnType<typeof setTimeout> | undefined
+    let start = { x: 0, y: 0 }
+    let holdId = -1
+    const follow = (x: number, y: number) => {
+      cursor.current = { x, y, movedAt: Date.now(), known: true, touch: true, holding: true }
+    }
+    const endHold = () => {
+      clearTimeout(holdTimer)
+      holdId = -1
+      if (cursor.current.holding) {
+        cursor.current.holding = false
+        document.body.style.removeProperty("user-select")
+        document.body.style.removeProperty("-webkit-user-select")
+      }
+    }
+    const onTouchDown = (e: PointerEvent) => {
+      if (e.pointerType !== "touch" || !e.isPrimary) return
+      const { wakefulness, chatOpen, homeOpen } = live.current
+      if (wakefulness !== "awake" || chatOpen || homeOpen) return
+      if ((e.target as Element | null)?.closest?.("a, button, input, textarea, select, [role=dialog]")) return
+      start = { x: e.clientX, y: e.clientY }
+      holdId = e.pointerId
+      clearTimeout(holdTimer)
+      holdTimer = setTimeout(() => {
+        follow(start.x, start.y)
+        lastInteraction.current = Date.now()
+        setSulking(false)
+        document.body.style.setProperty("user-select", "none")
+        document.body.style.setProperty("-webkit-user-select", "none")
+      }, 350)
+    }
+    const onTouchMove = (e: PointerEvent) => {
+      if (e.pointerType !== "touch" || e.pointerId !== holdId) return
+      if (cursor.current.holding) {
+        follow(e.clientX, e.clientY)
+      } else if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 10) {
+        clearTimeout(holdTimer) // it's a scroll or swipe, not a hold
+      }
+    }
+    // Once holding, keep the page from scrolling under the finger.
+    const blockScroll = (e: TouchEvent) => {
+      if (cursor.current.holding && e.cancelable) e.preventDefault()
+    }
+    const blockMenu = (e: Event) => {
+      if (cursor.current.holding) e.preventDefault()
     }
     const onScroll = () => {
       active()
@@ -398,6 +471,12 @@ export function Demi() {
 
     window.addEventListener("pointermove", onPointerMove, { passive: true })
     window.addEventListener("pointerdown", active, { passive: true })
+    window.addEventListener("pointerdown", onTouchDown, { passive: true })
+    window.addEventListener("pointermove", onTouchMove, { passive: true })
+    window.addEventListener("pointerup", endHold)
+    window.addEventListener("pointercancel", endHold)
+    window.addEventListener("touchmove", blockScroll, { passive: false })
+    window.addEventListener("contextmenu", blockMenu)
     window.addEventListener("keydown", active)
     window.addEventListener("scroll", onScroll, { passive: true })
     window.addEventListener("resize", onResize)
@@ -405,6 +484,13 @@ export function Demi() {
     return () => {
       window.removeEventListener("pointermove", onPointerMove)
       window.removeEventListener("pointerdown", active)
+      window.removeEventListener("pointerdown", onTouchDown)
+      window.removeEventListener("pointermove", onTouchMove)
+      window.removeEventListener("pointerup", endHold)
+      window.removeEventListener("pointercancel", endHold)
+      window.removeEventListener("touchmove", blockScroll)
+      window.removeEventListener("contextmenu", blockMenu)
+      endHold()
       window.removeEventListener("keydown", active)
       window.removeEventListener("scroll", onScroll)
       window.removeEventListener("resize", onResize)
@@ -459,11 +545,20 @@ export function Demi() {
       }
 
       const c = cursor.current
+      if (c.holding) {
+        // Finger down: stay lively and keep Demi hovering just above it.
+        lastActivity.current = now
+        lastInteraction.current = now
+        c.movedAt = now
+      }
       if (c.known && now - c.movedAt < 5000) {
         // Sit just below-right of the cursor, and only shift once the cursor
         // has moved a fair way, so Demi trails rather than jitters.
-        const want = clampToViewport(c.x + 44, c.y + 40)
-        if (Math.hypot(want.x - targetX.get(), want.y - targetY.get()) > 70) goTo(want.x, want.y)
+        // A finger covers what's under it, so on touch Demi hovers above it.
+        const want = c.touch
+          ? clampToViewport(c.x - SIZE / 2, c.y - SIZE - 28)
+          : clampToViewport(c.x + 44, c.y + 40)
+        if (Math.hypot(want.x - targetX.get(), want.y - targetY.get()) > (c.touch ? 16 : 70)) goTo(want.x, want.y)
         nextWanderAt.current = now + 3500
       } else if (now > nextWanderAt.current) {
         // Stroll along the bottom of the window, out of the way of content.
@@ -593,8 +688,13 @@ export function Demi() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.96 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            style={{ bottom: SIZE + 44, transformOrigin: "bottom right" }}
-            className="fixed z-50 right-4 left-4 sm:left-auto sm:right-6 sm:w-[22rem] max-h-[min(30rem,calc(100dvh-10rem))] flex flex-col rounded-2xl bg-[#1A1716] border border-paper/15 shadow-2xl shadow-black/60 text-paper"
+            style={
+              area.mobile
+                ? // Phone: a sheet above the keyboard; Demi steps aside while it's open.
+                  { bottom: area.inset + 12, maxHeight: Math.min(480, area.height - 24), transformOrigin: "bottom" }
+                : { bottom: SIZE + 44, transformOrigin: "bottom right" }
+            }
+            className="fixed z-50 right-3 left-3 sm:left-auto sm:right-6 sm:w-[22rem] sm:max-h-[min(30rem,calc(100dvh-10rem))] flex flex-col rounded-2xl bg-[#1A1716] border border-paper/15 shadow-2xl shadow-black/60 text-paper"
           >
             <div className="flex items-center gap-2 px-4 py-3 border-b border-paper/10">
               <span className="font-serif text-base text-paper">Demi</span>
@@ -709,7 +809,7 @@ export function Demi() {
                 disabled={chat.atLimit}
                 placeholder={chat.atLimit ? "Start a new chat to continue" : "Ask Demi something"}
                 aria-label="Message Demi"
-                className="flex-1 resize-none bg-transparent py-1.5 text-sm text-paper placeholder:text-paper/30 outline-none max-h-24 disabled:opacity-50"
+                className="flex-1 resize-none bg-transparent py-1.5 text-base sm:text-sm text-paper placeholder:text-paper/30 outline-none max-h-24 disabled:opacity-50"
               />
               <button
                 type="submit"
@@ -724,7 +824,7 @@ export function Demi() {
             {/* speech-bubble tail pointing down at Demi */}
             <span
               aria-hidden="true"
-              className="absolute -bottom-2 right-8 h-4 w-4 rotate-45 bg-[#1A1716] border-r border-b border-paper/15"
+              className="absolute -bottom-2 right-8 hidden sm:block h-4 w-4 rotate-45 bg-[#1A1716] border-r border-b border-paper/15"
             />
           </motion.div>
         )}
@@ -735,7 +835,7 @@ export function Demi() {
       <motion.div
         className="fixed left-0 top-0 z-50"
         // While the visitor is inside the house, Demi is in there with them.
-        style={{ x, y, width: SIZE, height: SIZE, display: homeOpen ? "none" : undefined }}
+        style={{ x, y, width: SIZE, height: SIZE, display: homeOpen || (chatOpen && area.mobile) ? "none" : undefined }}
       >
         <AnimatePresence>
           {line && !chatOpen && (
